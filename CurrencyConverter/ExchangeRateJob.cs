@@ -24,7 +24,7 @@ namespace CurrencyConverter
             }
             catch (Exception ex)
             {
-
+                throw;
             }
         }
 
@@ -56,7 +56,7 @@ namespace CurrencyConverter
             }
             catch (Exception ex)
             {
-
+                throw;
             }
         }
 
