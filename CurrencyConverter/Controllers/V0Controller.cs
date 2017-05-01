@@ -12,44 +12,56 @@ namespace CurrencyConverter.Controllers
     {
         readonly string[] supportedCurrencies = { "USD", "GBP", "AUD", "EUR", "CAD", "SGD" };
         [HttpPost]
+
         public object rate(RateModel rates)
         {
             try
             {
-                if (ModelState.IsValid)
+                if (rates == null)
                 {
-                    using (ExchangeContainer db = new ExchangeContainer())
+                    rates.Amount = 1;
+                    rates.CurrencyCode = "USD";
+                }
+                if (!supportedCurrencies.Contains(rates.CurrencyCode))
+                {
+                    return new
                     {
-                        var currencyExRate = db.ExchangeRates.Where(x => x.CurrencyCode == rates.CurrencyCode && x.IsActive).Select(r => new { r.Rate, r.UpdatedOn }).FirstOrDefault();
-                        double totalRates = Math.Round(rates.Amount * currencyExRate.Rate, 2);
-                        double conversionRate = Math.Round(currencyExRate.Rate, 2);
-                        long ticks = currencyExRate.UpdatedOn.Ticks;
-                        return new
-                        {
-                            SourceCurrency = rates.CurrencyCode,
-                            ConversionRate = conversionRate,
-                            Amount = rates.Amount,
-                            Total = totalRates,
-                            returncode = 1,
-                            err = "success",
-                            timestamp = ticks
-                        };
-                    }
+                        err = "Currency not supported",
+                        returncode = -2
+                    };
                 }
-                else
-                {
-                    return null;
-                }
+                return GetResponse(rates.CurrencyCode, rates.Amount);
             }
             catch (Exception ex)
             {
                 return new
                 {
-                    err = "error",
+                    err = "Please try again later",
                     returncode = -1
                 };
             }
         }
 
+        [WebApiOutputCache(120, 60, false)]
+        public object GetResponse(string CurrencyCode, double Amount)
+        {
+            using (ExchangeContainer db = new ExchangeContainer())
+            {
+                var currencyExRate = db.ExchangeRates.Where(x => x.CurrencyCode == CurrencyCode && x.IsActive).Select(r => new { r.Rate, r.UpdatedOn }).FirstOrDefault();
+                double totalRates = Math.Round(Amount * currencyExRate.Rate, 2);
+                double conversionRate = Math.Round(currencyExRate.Rate, 2);
+                long ticks = currencyExRate.UpdatedOn.Ticks;
+                return new
+                {
+                    SourceCurrency = CurrencyCode,
+                    ConversionRate = conversionRate,
+                    Amount = Amount,
+                    Total = totalRates,
+                    returncode = 1,
+                    err = "success",
+                    timestamp = ticks
+                };
+            }
+        }
     }
 }
