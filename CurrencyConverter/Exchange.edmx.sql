@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 04/30/2017 11:46:01
+-- Date Created: 05/01/2017 19:46:48
 -- Generated from EDMX file: G:\CurrencyConverter\CurrencyConverter\Exchange.edmx
 -- --------------------------------------------------
 

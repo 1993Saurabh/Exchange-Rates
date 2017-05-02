@@ -42,6 +42,7 @@ namespace CurrencyConverter.Controllers
             }
         }
 
+        //Attribute for maintaining ouput cache for 2 minutes
         [WebApiOutputCache(120, 60, false)]
         public object GetResponse(string CurrencyCode, double Amount)
         {
